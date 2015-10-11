@@ -127,17 +127,24 @@ int buscar(tabla *t, clave key){
 	int index = funcionHash(key);
 	int encontrado = 0;
 	while(!encontrado){
-		if(auxTabla->arreglo[index].lista->codigo == key){
-			imprimir(auxTabla->arreglo[index].lista);
-			encontrado = 1;
-			return 1;
-		}
-		else if(auxTabla->arreglo[index].lista == NULL){
-			printf("No encontrado\n");
-			return 0;
+		if(auxTabla->arreglo[index].largo >= 1){
+			if(auxTabla->arreglo[index].lista == NULL){
+				printf("No existe\n");
+				return 0;
+			}
+			if(auxTabla->arreglo[index].lista->codigo == key){
+				imprimir(auxTabla->arreglo[index].lista);
+				encontrado = 1;
+				return 1;
+			}
+			else{
+				auxTabla->arreglo[index].lista = auxTabla->arreglo[index].lista->sig;
+			}			
+			
 		}
 		else{
-			auxTabla->arreglo[index].lista = auxTabla->arreglo[index].lista->sig;
+			printf("No se hayan datos\n");
+			return 0;
 		}
 	}
 	return 0;
