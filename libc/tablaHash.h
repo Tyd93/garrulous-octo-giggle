@@ -30,7 +30,7 @@
 
 typedef struct eTabla{
 	int tamano;
-	vertice *arreglo;
+	vertice arreglo[RESTO];
 }tabla;
 
 
@@ -65,10 +65,7 @@ int funcionHash(clave key){
 
 int imprimir(nodo *encontrado){
 	printf("Imprimiendo lo solicitado:\n");
-	printf("\t- Nombre del local: %s\n",encontrado->fantasia);
-	printf("\t- Direccion: %s\n",encontrado->direccion);
-	printf("\t- Comuna: %s\n",encontrado->comuna);
-	printf("\t- Entidad asociada: %s\n",encontrado->entidad);
+	printf("%s\n",encontrado->registro);
 	return 1;
 }
 
@@ -80,41 +77,45 @@ int imprimir(nodo *encontrado){
 * la variable global "RESTO".
 */
 
-tabla *creartabla(int tam){
+tabla *creartabla(){
 	tabla *auxTabla = (tabla*)malloc(sizeof(tabla));
-	auxTabla->tamano = tam;
-	auxTabla->arreglo = (vertice *)malloc(tam *sizeof(vertice));
+	auxTabla->tamano = RESTO;
 	inicializarTabla(auxTabla);
 	return auxTabla;
 }
 
 /*
 * Funcion que cargara los datos desde el
-* archivo "puntos_bip.csv".
+* los archivos que se encuentren en el directorio.
 * la función sera llamada solo una vez.
 */
 
 int cargar(tabla *t){
-	char nombreArchivo[]= "puntos_bip.csv";
-	FILE *archivo = fopen(nombreArchivo,"r");
-	while(!feof(archivo)){
-		nodo *auxNodo = (nodo *)malloc(sizeof(nodo));
-		auxNodo->sig = NULL;
-		printf("hola\n");
-		fscanf(archivo,"%i;%s;%s;%s;%s",&(auxNodo->codigo),auxNodo->entidad,auxNodo->fantasia,auxNodo->direccion,auxNodo->comuna);
-		int index = funcionHash(auxNodo->codigo);
-		if(t->arreglo[index].largo == 0){
-			t->arreglo[index].lista = auxNodo;
-			t->arreglo[index].largo++;
+	FILE *archivo = fopen("libc/puntos_bip.csv","r");
+	if(archivo != NULL){
+		while(!feof(archivo)){
+			nodo *auxNodo = (nodo *)malloc(sizeof(nodo));
+			auxNodo->sig = NULL;
+			fscanf(archivo,"%i,%[^\n]\n",&(auxNodo->codigo),auxNodo->registro);
+			int index = funcionHash(auxNodo->codigo);
+			if(t->arreglo[index].largo == 0){
+				t->arreglo[index].lista = auxNodo;
+				t->arreglo[index].largo++;
+			}
+			else{
+				auxNodo->sig = t->arreglo[index].lista;
+				t->arreglo[index].lista = auxNodo;
+				t->arreglo[index].largo++;
+			}
 		}
-		else{
-			auxNodo->sig = t->arreglo[index].lista;
-			t->arreglo[index].lista = auxNodo;
-			t->arreglo[index].largo++;
-		}
+		fclose(archivo);
+		return 1;
 	}
-	return 1;
+	printf("Archivo no encontrado\n");
+	return 0;
 }
+
+	
 
 /*
 * Funcion que busca el valor dado
@@ -132,6 +133,7 @@ int buscar(tabla *t, clave key){
 			return 1;
 		}
 		else if(auxTabla->arreglo[index].lista == NULL){
+			printf("No encontrado\n");
 			return 0;
 		}
 		else{
@@ -139,4 +141,20 @@ int buscar(tabla *t, clave key){
 		}
 	}
 	return 0;
+}
+
+/*
+* Funcion que me imprimira la dispersion
+* del hash en cadena implementado por
+* mi funcion de Hash.
+*/
+
+int imprimirDispersion(tabla *t){
+	tabla *auxTabla = t;
+	FILE *archivoCsv = fopen("dispersion_bip.csv","w");
+	for(int i = 0; i<RESTO;i++){
+		fprintf(archivoCsv, "%i;%i\n",i,auxTabla->arreglo[i].largo);
+	}
+	fclose(archivoCsv);
+	return 1;
 }

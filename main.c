@@ -21,11 +21,18 @@
 #include "libc\tablaHash.h"
 #endif
 
-#define TAMTABLA 1013
-
+/*
+* Modificar en la funcion buscar,
+* el registro que se desea consultar
+*/
 int main(int argc,char const *argv[]){
-	tabla *t1 = creartabla(TAMTABLA);
-	//cargar(t1);
-	//buscar(t1,66346);
+	tabla *t1 = creartabla();
+	cargar(t1);
+	imprimirDispersion(t1);
+	printf("Ingrese el registro que desea buscar: ");
+	int registro = 0;
+	scanf("%i",&registro);
+	printf("\n");
+	buscar(t1,registro);
 	return 0;
 }
