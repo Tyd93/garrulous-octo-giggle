@@ -26,7 +26,6 @@
 #include <time.h>
 #endif
 
-#include <windows.h>
 /*
 * Modificar en la funcion buscar,
 * el registro que se desea consultar
@@ -38,9 +37,11 @@ int main(int argc,char const *argv[]){
 	cargar(t1);
 	time(&end);
 	double tiempoTranscurrido = difftime(end,start);
-	printf("El tiempo transcurrido para cargar fue : %f\n",tiempoTranscurrido);
+	printf("El tiempo transcurrido para cargar fue : %f segundos.\n",tiempoTranscurrido);
 	//Midiendo el tiempo para cargar
 	imprimirDispersion(t1);
+	imprimirDispersionGrafica(t1);
+	printf("Archivo de hoja de calculo y archivo grafico generado.\n");
 	printf("Ingrese el registro que desea buscar: ");
 	int registro = 0;
 	scanf("%i",&registro);
@@ -49,6 +50,14 @@ int main(int argc,char const *argv[]){
 	buscar(t1,registro);
 	time(&end);
 	tiempoTranscurrido = difftime(end,start);
-	printf("El tiempo transcurrido en buscar fue: %f\n",tiempoTranscurrido );
+	printf("El tiempo transcurrido en buscar fue: %f segundos.\n",tiempoTranscurrido );
 	return 0;
 }
+
+/*
+* 17-10-15
+* Modifique la base de datos a .txt.
+* Ademas separe los campos por espacios
+* y los espacios de cada campo ahora son
+* "_".
+*/
