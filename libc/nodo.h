@@ -36,7 +36,10 @@ typedef int clave;
 
 typedef struct eNodo{
 	clave codigo;
-	char registro[256];
+	char entidad[15];
+	char fantasia[70];
+	char direccion[70];
+	char comuna[20];
 	struct eNodo *sig;
 }nodo;
 

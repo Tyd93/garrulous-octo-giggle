@@ -59,13 +59,57 @@ int funcionHash(clave key){
 }
 
 /*
+* Anadida el 17-10-15.
+* Basicamente quita el "_" del
+* campo y lo reemplaza por un
+* " ".
+*/
+
+int quitaGuionBajo(nodo *encontrado){
+	int indiceString = 0;
+	while(encontrado->entidad[indiceString] != '\0'){
+		if(encontrado->entidad[indiceString] == '_'){
+			encontrado->entidad[indiceString] = ' ';
+		}
+		indiceString++;
+	}
+	indiceString = 0;
+	while(encontrado->fantasia[indiceString] != '\0'){
+		if(encontrado->fantasia[indiceString] == '_'){
+			encontrado->fantasia[indiceString] = ' ';
+		}
+		indiceString++;
+	}
+	indiceString = 0;
+	while(encontrado->direccion[indiceString] != '\0'){
+		if(encontrado->direccion[indiceString] == '_'){
+			encontrado->direccion[indiceString] = ' ';
+		}
+		indiceString++;
+	}
+	indiceString = 0;
+	while(encontrado->comuna[indiceString] != '\0'){
+		if(encontrado->comuna[indiceString] == '_'){
+			encontrado->comuna[indiceString] = ' ';
+		}
+		indiceString++;
+	}
+	return 1;
+}
+
+/*
 * Funcion que imprime el nodo
 * encontrado.
+* Imprime cada campo del registro.
 */
 
 int imprimir(nodo *encontrado){
+	quitaGuionBajo(encontrado);
 	printf("Imprimiendo lo solicitado:\n");
-	printf("%s\n",encontrado->registro);
+	printf("\tEntidad a cargo: %s\n",encontrado->entidad);
+	printf("\tNombre: %s\n",encontrado->fantasia);
+	printf("\tDireccion: %s\n",encontrado->direccion);
+	printf("\tComuna: %s\n",encontrado->comuna);
 	return 1;
 }
 
@@ -91,12 +135,14 @@ tabla *creartabla(){
 */
 
 int cargar(tabla *t){
-	FILE *archivo = fopen("libc/puntos_bip.csv","r");
+	FILE *archivo = fopen("libc/puntos_bip.txt","r");
 	if(archivo != NULL){
 		while(!feof(archivo)){
 			nodo *auxNodo = (nodo *)malloc(sizeof(nodo));
 			auxNodo->sig = NULL;
-			fscanf(archivo,"%i,%[^\n]\n",&(auxNodo->codigo),auxNodo->registro);
+			fscanf(archivo,"%i %s %s %s %s\n",&(auxNodo->codigo),auxNodo->entidad, auxNodo->fantasia, auxNodo->direccion, auxNodo->comuna);
+			//printf("%s\n",auxNodo->fantasia);
+			//getchar();
 			int index = funcionHash(auxNodo->codigo);
 			if(t->arreglo[index].largo == 0){
 				t->arreglo[index].lista = auxNodo;
@@ -163,5 +209,28 @@ int imprimirDispersion(tabla *t){
 		fprintf(archivoCsv, "%i;%i\n",i,auxTabla->arreglo[i].largo);
 	}
 	fclose(archivoCsv);
+	return 1;
+}
+
+/*
+* Imprimir grafico dispersion.
+* Imprime un grafico visual en consola
+* del numero de elementos que contiene cada
+* nodo
+*/
+
+int imprimirDispersionGrafica(tabla *t){
+	tabla *auxTabla = t;
+	int indiceTabla = 0;
+	FILE *archivoTxt = fopen("dispersion_bip.txt","w");
+	while(indiceTabla < RESTO){
+		fprintf(archivoTxt,"[%i] ",indiceTabla);
+		for(int x = 0;x < auxTabla->arreglo[indiceTabla].largo;x++){
+			fprintf(archivoTxt,"=");
+		}
+		fprintf(archivoTxt,"\n");
+		indiceTabla++;
+	}
+	fclose(archivoTxt);
 	return 1;
 }
